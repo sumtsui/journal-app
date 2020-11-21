@@ -1,0 +1,14 @@
+@mixin secondary-text {
+  font-size: 0.8em;
+  color: gray;
+}
+
+.post-list {
+  .new-post-btn {
+    display: block;
+    margin-bottom: 2em;
+  }
+  .bottom {
+    @include secondary-text;
+  }
+}

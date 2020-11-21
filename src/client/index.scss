@@ -1,0 +1,53 @@
+body {
+  margin: 0;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+a {
+  text-decoration: none;
+}
+
+@mixin secondary-text {
+  font-size: 0.8em;
+  color: gray;
+}
+
+.main-wrap {
+  width: 70%;
+  margin: auto;
+  padding: 2em 0;
+  .title {
+    font-size: 1.4em;
+  }
+  .buttons {
+    button:not(:last-child) {
+      margin-right: 0.6em;
+    }
+  }
+}
+
+.single-post {
+  > * {
+    margin-bottom: 1em;
+  }
+  .info {
+    @include secondary-text;
+  }
+  .title,
+  .content {
+    width: 70%;
+    font-size: 1.2em;
+  }
+  .form-bottom {
+    > button {
+      margin-right: 2em;
+    }
+  }
+}
+
+footer {
+  height: 100px;
+}

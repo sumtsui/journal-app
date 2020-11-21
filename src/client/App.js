@@ -1,23 +1,52 @@
-import React, { Component } from 'react';
-import './app.css';
-import ReactImage from './react.png';
+import React from 'react';
+import PostList from './components/PostList';
+import PostView from './components/PostView';
+import PostNew from './components/PostNew';
+import PostEdit from './components/PostEdit';
+import Login from './components/Login';
+import Signup from './components/Signup';
+import Header from './components/Header';
+import PrivateRoute from './components/PrivateRoute';
+import { useQuery } from '@apollo/react-hooks';
+import { Switch, Route } from 'react-router-dom';
+import { withApollo } from 'react-apollo';
+import Layout from './components/Layout';
+import gql from 'graphql-tag';
+import { ThemeProvider } from 'styled-components';
 
-export default class App extends Component {
-  state = { username: null };
+function App() {
+  const { data } = useQuery(gql`
+    {
+      darkMode @client
+    }
+  `);
 
-  componentDidMount() {
-    fetch('/api/getUsername')
-      .then(res => res.json())
-      .then(user => this.setState({ username: user.username }));
-  }
-
-  render() {
-    const { username } = this.state;
-    return (
-      <div>
-        {username ? <h1>{`Hello ${username}`}</h1> : <h1>Loading.. please wait!</h1>}
-        <img src={ReactImage} alt="react" />
-      </div>
-    );
-  }
+  return (
+    <ThemeProvider theme={{ dark: data.darkMode }}>
+      <Layout>
+        <Header />
+        <div className="main-wrap">
+          <Switch>
+            <Route path="/login" render={() => <Login />}></Route>
+            <Route path="/signup" render={() => <Signup />}></Route>
+            <PrivateRoute path="/post/new">
+              <PostNew />
+            </PrivateRoute>
+            <PrivateRoute path="/post/:id/edit">
+              <PostEdit />
+            </PrivateRoute>
+            <PrivateRoute path="/post/:id">
+              <PostView />
+            </PrivateRoute>
+            <PrivateRoute path="/">
+              <PostList />
+            </PrivateRoute>
+          </Switch>
+        </div>
+        <footer></footer>
+      </Layout>
+    </ThemeProvider>
+  );
 }
+
+export default withApollo(App);
