@@ -11,11 +11,6 @@ module.exports = {
       return currentUser;
     },
   },
-  Post: {
-    id(post) {
-      return post._id.toString();
-    },
-  },
   Mutation: {
     signup(_, { userInput }, { model }) {
       return model.user.signup(userInput);

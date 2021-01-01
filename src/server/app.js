@@ -12,10 +12,7 @@ const { verifyToken } = require('./utils');
 const PORT = process.env.SERVER_PORT || 5001;
 const DB_URL = process.env.DB_URL;
 
-const STATIC_FILE_PATH = path.join(
-  __dirname,
-  process.env.STATIC_FILE_RELATIVE_PATH || ''
-);
+const STATIC_FILE_PATH = path.join(__dirname, '../../dist');
 
 const server = new ApolloServer({
   typeDefs,
@@ -51,13 +48,24 @@ const server = new ApolloServer({
 });
 
 const app = express();
-app.disable('x-powered-by');
 app.use(cors());
-app.use(express.static(STATIC_FILE_PATH));
-server.applyMiddleware({ app });
 app.get('*', function (req, res) {
-  res.sendFile(STATIC_FILE_PATH);
+  // graphql request is POST, no need to handle here.
+
+  const { path } = req;
+  console.log('\n\nreq.path %s\n\n', path);
+
+  if (path.includes('.')) {
+    const filename = path.split('/').slice(-1)[0];
+    console.log('\n\nhandle specific file request %s\n\n', path);
+    res.sendFile(STATIC_FILE_PATH + '/' + filename);
+  } else {
+    console.log('\n\nhandle other paths, serve index.html %s\n\n', path);
+    res.sendFile(STATIC_FILE_PATH + '/index.html');
+  }
 });
+
+server.applyMiddleware({ app });
 
 const start = async () => {
   try {
@@ -66,9 +74,7 @@ const start = async () => {
       useUnifiedTopology: true,
     });
     app.listen(PORT, () => {
-      console.log(
-        `🚀 Server ready at http://localhost:${PORT}${server.graphqlPath}`
-      );
+      console.log(`🚀 Server ready at http://localhost:${PORT}${server.graphqlPath}`);
     });
   } catch (e) {
     console.error(e);
